@@ -1,6 +1,8 @@
 var page = 1;
 var upID;
 var downID;
+var leftID;
+var rightID;
 var lock = false;
 var paperX = 106;
 var paperY = 268;
@@ -9,6 +11,10 @@ var paperSizeY = 20;
 var stateOfPaper = 1;
 var handPaperY = 600;
 var inPaperLocation = false;
+var inLockerLocation = false;
+var lockers = [[]];
+var puzzleResult = false;
+var puzzleResultCounter = 0;
 
 function preload () {
   bg01 = loadImage("https://dl.dropboxusercontent.com/s/h8agmlzfcfbse00/bg01.PNG?");
@@ -18,8 +24,12 @@ function preload () {
   left = loadImage("https://dl.dropboxusercontent.com/s/6k19qdmedmrfujc/left.png");
   right = loadImage("https://dl.dropboxusercontent.com/s/7y0xym3zxtpz3h0/right.png");
   bgm = loadSound("https://dl.dropboxusercontent.com/s/envcrhqqxmbnbsf/Aokigahara%20Puzzle%203.m4a");
-  handPaper = loadImage ("https://dl.dropboxusercontent.com/s/fo5v4hg3eqjrhp2/handPaper.png");
+  handPaper = loadImage ("https://dl.dropboxusercontent.com/s/e4gvj7w2p44qiaz/handPaper.png");
   paper = loadImage("https://dl.dropboxusercontent.com/s/uktwivvfxhyqt8r/paper.png");
+  lockerO = loadImage("https://dl.dropboxusercontent.com/s/9vwrm4kqtfwwqkv/lockerO.png");
+  lockerC = loadImage("https://dl.dropboxusercontent.com/s/r28qg55jgyohszw/lockerC.png");
+  resetButton = loadImage("https://dl.dropboxusercontent.com/s/3y16g8jcd87lzc2/resetButton.png");
+  bg04 = loadImage("https://dl.dropboxusercontent.com/s/46b48vph3l709xm/bg04.PNG");
 }
 
 function setup () {
@@ -28,6 +38,22 @@ function setup () {
 
   sliderVol = createSlider(0, 1, 0.0, 0.01);
   sliderVol.style('width', '800px');
+
+
+  for (var j = 0; j < 11; j++) {
+    lockers.push([]);
+  }
+
+  for (var i = 0; i < 11; i++) {
+    lockers[i].push([]);
+  }
+
+  for (var r = 0; r < 11; r++) {
+    for (var c = 0; c < 11; c++) {
+      lockers[r][c] = 0;
+    }
+  }
+
 }
 
 function draw () {
@@ -43,8 +69,16 @@ function draw () {
       page02();
     } else if (page == 3) {
       page03();
+    } else if (page == 4){
+      page04();
     }
 
+    if(page<1){
+      page=1;
+    }
+    if(page>4){
+      page=4;
+    }
   test();
 }
 
@@ -61,7 +95,7 @@ function page01 () {
     cursor(ARROW);
   }
 
-//////////////////////
+
   image(up, (width/2)-40, 0, 80, 80);
   //image(left, 0, (height/2)-40, 80, 80);
   //image(right, 720, (height/2)-40, 80, 80);
@@ -85,16 +119,15 @@ function page02 () {
   }
 
   image(paper,paperX,paperY,paperSizeX,paperSizeY);
-////////////////////////
   image(up, (width/2)-40, 0, 80, 80);
   //image(left,0, (height/2)-40, 80, 80);
   //image(right, 720, (height/2)-40, 80, 80);
   image(down,(width/2)-40, 520, 80, 80);
 }
 
-
 function page03 () {
   background(180);
+  image(resetButton,0,(height/2)-40,80,80);
   nav ();
 
   if (downID < 40 && (stateOfPaper != 5 )) {
@@ -102,27 +135,91 @@ function page03 () {
     cursor(HAND);
   } else if (inPaperLocation == true) {
     cursor(HAND);
+  } else if(rightID < 40  && (stateOfPaper != 5 )) {
+    ellipse(760,height/2,80,80);
+    cursor(HAND);
+  } else if (leftID < 40  && (stateOfPaper != 5 )){
+    cursor(HAND);
+  } else {
+    cursor(ARROW);
+  }
+  // creates lockers
+  for (var r = 1; r < 11; r++) {
+    for (var c = 0; c < 10; c++) {
+      if (lockers[r][c] == 1) {
+        image(lockerO,(r*50)+100,c*50,70,50);
+      } else {
+        image(lockerC,(r*50)+100,c*50,50,50);
+      }
+    }
+    textSize(11);
+    fill(0);
+    noStroke();
+    for (var a = 0; a<10; a++){
+      text(r+(10*a),(r*50)+105,25+(50*a),50,50);
+    }
+  }
+    // mouse over locker
+  for (var r = 1; r < 11; r++) {
+    for (var c = 0; c < 11; c++) {
+      if (mouseIsPressed == true && mouseX > (r*50)+100 && mouseX < (r*50)+100+50 && mouseY > c*50 && mouseY < c*50+50 && lock == false) {
+        lockers[r][c] = 1;
+        lock = true;
+        puzzleResultCounter++;
+      }
+    }
+  }
+  // evaluate locker
+  for (var r = 1; r < 11; r++) {
+    for (var c = 0; c < 11; c++) {
+      if (lockers[1][0] == 1 && lockers[4][0] == 1 && lockers[9][0] == 1 && lockers[6][1] == 1 && lockers[5][2] == 1 && lockers[6][3] == 1 && lockers[9][4] == 1 && lockers[4][6] == 1 && lockers[1][8] == 1 && lockers[10][9] == 1) {
+      puzzleResult = true;
+      } else {
+        puzzleResult = false;
+      }
+    }
+  }
+
+  //image(up, (width/2)-40, 0, 80, 80);
+  //image(left, 0, (height/2)-40, 80, 80);
+  image(right, 720, (height/2)-40, 80, 80);
+  image(down,(width/2)-40, 520, 80, 80);
+}
+
+function page04 () {
+  image(bg04, 0, 0, 800, 600);
+  nav ();
+
+  if (leftID < 40 && (stateOfPaper != 5 )) {
+    ellipse(40,height/2,80,80);
+    cursor(HAND);
+  } else if (inPaperLocation == true) {
+    cursor(HAND);
   } else {
     cursor(ARROW);
   }
 
-//////////////////////
+
   //image(up, (width/2)-40, 0, 80, 80);
-  //image(left, 0, (height/2)-40, 80, 80);
+  image(left, 0, (height/2)-40, 80, 80);
   //image(right, 720, (height/2)-40, 80, 80);
-  image(down,(width/2)-40, 520, 80, 80);
+  //image(down,(width/2)-40, 520, 80, 80);
 }
+
 function ID () {
   upID = sqrt(((mouseX-(width/2))*(mouseX-(width/2))) + ((mouseY-40)*(mouseY-40)));
   downID = sqrt(((mouseX-(width/2))*(mouseX-(width/2))) + ((mouseY-560)*(mouseY-560)));
+  rightID = sqrt(((mouseX-760)*(mouseX-760)) + ((mouseY-(height/2))*(mouseY-(height/2))));
+  leftID = sqrt(((mouseX-40)*(mouseX-40)) + ((mouseY-(height/2))*(mouseY-(height/2))));
 
   if (mouseX>paperX && mouseX<paperX+paperSizeX && mouseY>paperY && mouseY<paperY+paperSizeY) {
     inPaperLocation = true;
   } else {
     inPaperLocation = false;
   }
-}
 
+
+}
 
 function nav () {
   noStroke();
@@ -168,10 +265,10 @@ function nav () {
       }
   }
 
+
   if (paperX == 220 && paperY == 520 && paperSizeX == 60 && paperSizeY == 60 && handPaperY == 600) {
     stateOfPaper = 3;
     image(paper,paperX,paperY, paperSizeX,paperSizeY);
-    image(handPaper,0,handPaperY, width, height);
     lock = false;
   }
 
@@ -184,34 +281,68 @@ function nav () {
 
 }
 
-
 function mousePressed () {
-  if (mouseIsPressed == true && upID < 40 && lock == false && (stateOfPaper != 5 )) {
+  if (upID < 40 && lock == false && stateOfPaper != 5 && page != 3) {
     page = page + 1;
-    //lock = true;
+    lock = true;
+    if ( rightID < 40 && page == 3) {
+        page = page + 1;
+        lock = true;
+    }
   }
 
-  if (mouseIsPressed == true && downID < 40 && lock == false && (stateOfPaper != 5 )) {
+  if (downID < 40 && lock == false && (stateOfPaper != 5 )) {
     page = page - 1;
-    //lock = true;
+    lock = true;
   }
 
-  if (inPaperLocation == true && mouseIsPressed == true  && lock == false &&(page == 2 || stateOfPaper > 1)){
-    stateOfPaper = stateOfPaper+1;
-    //lock = true;
+  if (inPaperLocation == true && lock == false && (page == 2 || stateOfPaper > 1)) {
+    lock = true;
+    stateOfPaper = stateOfPaper + 1;
+    rect(0,0,width,height);
+  }
+
+  if (rightID < 40){
+    if (puzzleResult == true && puzzleResultCounter == 10 && page == 3 && lock == false) {
+      page = page +1;
+      lock = true;
+    } else {
+      alert("Sorry, your answer is wrong");
+    }
+  }
+
+  if (leftID < 40 && lock == false && (stateOfPaper != 5 ) && page == 4) {
+    page = page - 1;
+    lock = true;
+  }
+
+
+  if(leftID < 40 && lock == false && page == 3 && (stateOfPaper != 5) ) {
+    for (var r = 1; r < 11; r++) {
+      for (var c = 0; c < 10; c++) {
+        lockers[r][c] = 0;
+        puzzleResultCounter = 0;
+        puzzleResult = false;
+      }
+    }
+    lock = true;
   }
 }
 
 function mouseReleased () {
-  if (mouseIsReleased == true) {
+  if (lock == true) {
     lock = false;
   }
 }
 
 function test () {
+  fill(255);
+  rect(0,0,100,200);
   fill(225,0,0);
   textSize(11);
   text("("+int(mouseX)+","+int(mouseY)+")", 40,20);
-  text(int(stateOfPaper),40,40);
-  text(lock,40,60);
+  text(lock,40,40);
+  text(puzzleResultCounter,40,60);
+  text(puzzleResult,40,80);
+  text(page,40,100);
 }
