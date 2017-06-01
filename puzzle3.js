@@ -33,6 +33,13 @@ var stateOfMapR = 1;
 var freeToGo = false;
 var freeToClick = false;
 
+var b =0;
+var handMapLX = 0;
+var handMapRX = 400;
+
+var startAnimation = false;
+var linkToInput = false;
+
 function preload () {
   bg01 = loadImage("https://dl.dropboxusercontent.com/s/h8agmlzfcfbse00/bg01.PNG?");
   bg02 = loadImage("https://dl.dropboxusercontent.com/s/ovxrhqpmzm961si/bg02.png");
@@ -51,6 +58,7 @@ function preload () {
   handMapL = loadImage("https://dl.dropboxusercontent.com/s/ol6xhfo7akcwonf/handMapL.png");
   mapR = loadImage("https://dl.dropboxusercontent.com/s/pcufri1vqso4t07/mapR.png");
   handMapR = loadImage("https://dl.dropboxusercontent.com/s/buibx04r52vrsw3/handMapR.png");
+  bb = loadImage("https://dl.dropboxusercontent.com/s/6lgv0gi5ehawnhz/bb.jpg");
 }
 
 function setup () {
@@ -75,6 +83,17 @@ function setup () {
     }
   }
 
+  if(linkToInput = true){
+    input = createInput("_");
+    //input.hint("haha");
+    input.style("width","660px");
+    input.style("height","65px");
+    //input.style("fontSize","300%");
+    input.style("font","italic 300% arial");
+    //input.position(25, 652);
+    input.position(25, 704);
+  }
+
 }
 
 function draw () {
@@ -83,24 +102,53 @@ function draw () {
   if (bgm.isPlaying() == false) {
     bgm.play();
   }
-    if (page == 1) {
-      page01();
-      //tint(255, 128);
-    } else if (page == 2) {
-      page02();
-    } else if (page == 3) {
-      page03();
-    } else if (page == 4){
-      page04();
-    }
-
+  if (page == 1) {
+    page01();
+    //tint(255, 128);
+  } else if (page == 2) {
+    page02();
+  } else if (page == 3) {
+    page03();
+  } else if (page == 4){
+    page04();
+  }
     if(page<1){
-      page=1;
+    page=1;
+  }
+  if(page>4){
+    page=4;
+  }
+  if(b>255){
+    b=255;
+  }
+
+
+  if (stateOfMapR == 5 && stateOfMapL == 3 && lock == false) {
+    startAnimation = true;
+    lock = true;
+  }
+  if(startAnimation == true){
+    b = b+10;
+    tint(225,b);
+    image(bb,0,0,width,height);
+    noTint();
+    image(handMapL, handMapLX,0,400, 600);
+    image(handMapR, handMapRX,0,400, 600);
+
+    handMapLX = handMapLX + 2;
+    handMapRX = handMapRX - 2;
+    if(handMapLX > 40){
+      handMapLX = 40;
     }
-    if(page>4){
-      page=4;
+    if (handMapRX <360){
+      handMapRX = 360;
     }
-  test();
+  }
+
+  if( handMapRX == 360 && handMapLX == 40){
+    finalPage();
+  }
+test();
 }
 
 function page01 () {
@@ -421,6 +469,12 @@ function nav () {
 
 }
 
+function finalPage () {
+  background(0);
+  image(handMapL, handMapLX,0,400, 600);
+  image(handMapR, handMapRX,0,400, 600);
+  linkToInput = true
+}
 
 
 function mousePressed () {
@@ -493,5 +547,5 @@ function test () {
   text("lock "+lock, 0, 10, 100, 20);
   text("inMapLLocation "+inMapLLocation, 0, 20, 100, 20);
   text(puzzleResult, 0, 30, 100, 20);
-  text(puzzleResultCounter,0, 40, 100, 20);
+  text(b,0, 40, 100, 20);
 }
