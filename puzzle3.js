@@ -1,21 +1,37 @@
-var page = 1;
+var page = 4;
 var upID;
 var downID;
 var leftID;
 var rightID;
 var lock = false;
+
 var paperX = 106;
 var paperY = 268;
 var paperSizeX = 15;
 var paperSizeY = 20;
-var stateOfPaper = 1;
 var handPaperY = 600;
+var stateOfPaper = 1;
+
 var inPaperLocation = false;
 var inLockerLocation = false;
+
 var lockers = [[]];
 var puzzleResult = false;
 var puzzleResultCounter = 0;
-var b =0;
+
+var stateOfMapL = 1;
+var handMapLY = 600;
+
+
+var mapRX = 745;
+var mapRY = 360;
+var mapRSizeX = 10;
+var mapRSizeY = 20;
+var handMapRY = 600;
+var stateOfMapR = 1;
+
+var freeToGo = false;
+var freeToClick = false;
 
 function preload () {
   bg01 = loadImage("https://dl.dropboxusercontent.com/s/h8agmlzfcfbse00/bg01.PNG?");
@@ -31,6 +47,10 @@ function preload () {
   lockerC = loadImage("https://dl.dropboxusercontent.com/s/r28qg55jgyohszw/lockerC.png");
   resetButton = loadImage("https://dl.dropboxusercontent.com/s/3y16g8jcd87lzc2/resetButton.png");
   bg04 = loadImage("https://dl.dropboxusercontent.com/s/46b48vph3l709xm/bg04.PNG");
+  mapL = loadImage("https://dl.dropboxusercontent.com/s/7xzbsbs5vxwrey0/mapL.png");
+  handMapL = loadImage("https://dl.dropboxusercontent.com/s/ol6xhfo7akcwonf/handMapL.png");
+  mapR = loadImage("https://dl.dropboxusercontent.com/s/pcufri1vqso4t07/mapR.png");
+  handMapR = loadImage("https://dl.dropboxusercontent.com/s/buibx04r52vrsw3/handMapR.png");
 }
 
 function setup () {
@@ -87,15 +107,18 @@ function page01 () {
   image(bg01, 0, 0, 800, 600);
   nav ();
 
-  if (upID < 40 && (stateOfPaper != 5 )) {
+  if (upID < 40 && freeToGo == true) {
     ellipse(width/2,40,80,80);
+    cursor(HAND);
+  } else if (inMapRLocation == true) {
+    cursor(HAND);
+  } else if (inMapLLocation == true) {
     cursor(HAND);
   } else if (inPaperLocation == true) {
     cursor(HAND);
   } else {
     cursor(ARROW);
   }
-
 
   image(up, (width/2)-40, 0, 80, 80);
   //image(left, 0, (height/2)-40, 80, 80);
@@ -107,13 +130,17 @@ function page02 () {
   image(bg02, 0, 0, 800, 600);
   nav ();
 
-  if (downID < 40 && (stateOfPaper != 5 )) {
+  if (downID < 40 && freeToGo == true) {
     ellipse(width/2,560,80,80);
     cursor(HAND);
-  } else if (upID < 40 && (stateOfPaper != 5 )) {
+  } else if (upID < 40 && freeToGo == true) {
     ellipse(width/2,40,80,80);
     cursor(HAND);
   } else if (inPaperLocation == true) {
+    cursor(HAND);
+  } else if (inMapRLocation == true) {
+    cursor(HAND);
+  } else if (inMapLLocation == true) {
     cursor(HAND);
   } else {
     cursor(ARROW);
@@ -147,9 +174,15 @@ function page03 () {
   for (var r = 1; r < 11; r++) {
     for (var c = 0; c < 11; c++) {
       if (mouseIsPressed == true && mouseX > (r*50)+100 && mouseX < (r*50)+100+50 && mouseY > c*50 && mouseY < c*50+50 && lock == false) {
-        lockers[r][c] = 1;
         lock = true;
+        lockers[r][c] = 1;
         puzzleResultCounter++;
+        /*if(lockers[r][c] = 0){
+          lockers[r][c] = 1;
+          puzzleResultCounter++;
+        } else {
+
+        }*/
       }
     }
   }
@@ -157,7 +190,7 @@ function page03 () {
   for (var r = 1; r < 11; r++) {
     for (var c = 0; c < 11; c++) {
       if (lockers[1][0] == 1 && lockers[4][0] == 1 && lockers[9][0] == 1 && lockers[6][1] == 1 && lockers[5][2] == 1 && lockers[6][3] == 1 && lockers[9][4] == 1 && lockers[4][6] == 1 && lockers[1][8] == 1 && lockers[10][9] == 1) {
-      puzzleResult = true;
+        puzzleResult = true;
       } else {
         puzzleResult = false;
       }
@@ -170,15 +203,21 @@ function page03 () {
   image(resetButton,0,(height/2)-40,80,80);
   nav ();
 
-  if (downID < 40 && (stateOfPaper != 5 )) {
+  if (downID < 40 && freeToGo == true) {
     ellipse(width/2,560,80,80);
     cursor(HAND);
   } else if (inPaperLocation == true) {
     cursor(HAND);
-  } else if(rightID < 40  && (stateOfPaper != 5 )) {
+  } else if(rightID < 40 && freeToGo == true) {
     ellipse(760,height/2,80,80);
     cursor(HAND);
-  } else if (leftID < 40  && (stateOfPaper != 5 )){
+  } else if (leftID < 40 && freeToGo == true){
+    cursor(HAND);
+  } else if (inMapRLocation == true) {
+    cursor(HAND);
+  } else if (inMapLLocation == true) {
+    cursor(HAND);
+  } else if (inPaperLocation == true) {
     cursor(HAND);
   } else {
     cursor(ARROW);
@@ -194,14 +233,20 @@ function page04 () {
   image(bg04, 0, 0, 800, 600);
   nav ();
 
-  if (leftID < 40 && (stateOfPaper != 5 )) {
+  if (leftID < 40 && freeToGo == true) {
     ellipse(40,height/2,80,80);
     cursor(HAND);
   } else if (inPaperLocation == true) {
     cursor(HAND);
+  } else if (inMapRLocation == true) {
+    cursor(HAND);
+  } else if (inMapLLocation == true) {
+    cursor(HAND);
   } else {
     cursor(ARROW);
   }
+
+  image(mapR,mapRX,mapRY,mapRSizeX,mapRSizeY);
   //image(up, (width/2)-40, 0, 80, 80);
   image(left, 0, (height/2)-40, 80, 80);
   //image(right, 720, (height/2)-40, 80, 80);
@@ -220,7 +265,23 @@ function ID () {
     inPaperLocation = false;
   }
 
+  if (mouseX > 20 && mouseX < 80 && mouseY > 520 && mouseY < 580) {
+    inMapLLocation = true;
+  } else {
+    inMapLLocation = false;
+  }
 
+  if (mouseX>mapRX && mouseX<mapRX+mapRSizeX && mouseY>mapRY && mouseY<mapRY+mapRSizeY) {
+    inMapRLocation = true;
+  } else {
+    inMapRLocation = false;
+  }
+
+  if(stateOfMapL != 3 && stateOfPaper != 5 && stateOfMapR != 5) {
+    freeToGo = true;
+  } else {
+    freeToGo = false;
+  }
 }
 
 function nav () {
@@ -231,10 +292,40 @@ function nav () {
   rect(10, 510, 80, 80);
   rect(110, 510, 80, 80);
   rect(210, 510, 80, 80);
+  image(mapL, 20, 520, 60, 60);
 
+//mapL
+{
+  if(stateOfMapL == 1){
+  } else if(stateOfMapL == 2) {
+    image(handMapL,0,handMapLY, 400, height);
+    handMapLY = handMapLY - 20;
+    if (handMapLY < 0) {
+      handMapLY = 0;
+    }
+  } else if(stateOfMapL == 4) {
+    image(handMapL,0,handMapLY, 400, height);
+    handMapLY = handMapLY + 20;
+    if (handMapLY > 600) {
+      handMapLY = 600;
+    }
+  }
+
+  if(handMapLY == 600){
+    stateOfMapL = 1;
+    //lock = false;///////////////////////////////////////////////////////
+  }
+  if(handMapLY == 0){
+    stateOfMapL = 3;
+    //lock = false;/////////////////////////////////////////////////////
+    image(handMapL,0,handMapLY, 400, height);
+  }}
+
+//paper
+{
   if(stateOfPaper == 1) {
   }else if(stateOfPaper == 2) {
-    lock = true;
+    image(paper,paperX,paperY, paperSizeX,paperSizeY);
     paperX = paperX + 10;
     paperY = paperY + 10;
     paperSizeX = paperSizeX + 5;
@@ -252,14 +343,14 @@ function nav () {
       paperSizeY = 60;
     }
   }else if(stateOfPaper == 4) {
-    lock = true;
+    image(paper,paperX,paperY, paperSizeX,paperSizeY);
     image(handPaper,0,handPaperY, width, height);
     handPaperY = handPaperY - 20;
     if (handPaperY < 0) {
       handPaperY = 0;
     }
   }else if(stateOfPaper == 6) {
-    lock = true;
+    image(paper,paperX,paperY, paperSizeX,paperSizeY);
     image(handPaper,0,handPaperY, width, height);
     handPaperY = handPaperY + 20;
     if (handPaperY > 600) {
@@ -268,35 +359,97 @@ function nav () {
   }
   if (paperX == 220 && paperY == 520 && paperSizeX == 60 && paperSizeY == 60 && handPaperY == 600) {
     stateOfPaper = 3;
-    lock = false;
+    //lock = false;/////////////////////////////////////////////////////////////////////////////////////////////////one i get to state3, i nned to false lock
     image(paper,paperX,paperY, paperSizeX,paperSizeY);
   }
 
   if (handPaperY == 0) {
     stateOfPaper = 5;
-    lock = false;
+    //lock = false;/////////////////////////////////////////////////////////////////////////////////////////////////one i get to state3, i nned to false lock
     image(paper,paperX,paperY, paperSizeX,paperSizeY);
     image(handPaper,0,handPaperY, width, height);
+  }}
+
+//mapR
+{
+  if(stateOfMapR == 1) {
+  }else if(stateOfMapR == 2) {
+  image(mapR,mapRX,mapRY, mapRSizeX,mapRSizeY);
+    mapRX = mapRX - 10;
+    mapRY = mapRY + 10;
+    mapRSizeX = mapRSizeX + 5;
+    mapRSizeY = mapRSizeY + 5;
+    if (mapRX < 120) {
+      mapRX = 120;
+    }
+    if(mapRY > 520) {
+      mapRY = 520;
+    }
+    if (mapRSizeX > 60) {
+      mapRSizeX = 60;
+    }
+    if(mapRSizeY > 60) {
+      mapRSizeY = 60;
+    }
+  }else if(stateOfMapR == 4) {
+  image(mapR,mapRX,mapRY, mapRSizeX,mapRSizeY);
+    image(handMapR,400,handMapRY, 400, height);
+    handMapRY = handMapRY - 20;
+    if (handMapRY < 0) {
+      handMapRY = 0;
+    }
+  }else if(stateOfMapR == 6) {
+  image(mapR,mapRX,mapRY, mapRSizeX,mapRSizeY);
+    image(handMapR,400,handMapRY, 400, height);
+    handMapRY = handMapRY + 20;
+    if (handMapRY > 600) {
+      handMapRY = 600;
+    }
   }
+  if (mapRX == 120 && mapRY == 520 && mapRSizeX == 60 && mapRSizeY == 60 && handMapRY == 600) {
+    stateOfMapR = 3;
+    //lock = false;/////////////////////////////////////////////////////////////////////////////////////////////////one i get to state3, i nned to false lock
+    image(mapR,mapRX,mapRY, mapRSizeX,mapRSizeY);
+  }
+
+  if (handMapRY == 0) {
+    stateOfMapR = 5;
+    //lock = false;/////////////////////////////////////////////////////////////////////////////////////////////////one i get to state3, i nned to false lock
+    image(mapR,mapRX,mapRY, mapRSizeX,mapRSizeY);
+    image(handMapR,400,handMapRY, 400, height);
+  }}
+
 }
 
+
+
 function mousePressed () {
-  if (upID < 40 && lock == false && stateOfPaper != 5 && page != 3) {
+  if (upID < 40 && lock == false && freeToGo == true && page != 3) {
     lock = true;
     page = page + 1;
   }
 
-  if (downID < 40 && lock == false && (stateOfPaper != 5 )) {
+  if (downID < 40 && lock == false && freeToGo == true) {
     lock = true;
     page = page - 1;
   }
 
-  if (inPaperLocation == true && lock == false && (page == 2 || stateOfPaper > 1)) {
+  if (inPaperLocation == true && lock == false && (page == 2 || stateOfPaper > 1) && (stateOfMapL == 1) && (stateOfMapR == 1 || stateOfMapR ==3)) {
     stateOfPaper = stateOfPaper + 1;
-    //lock = true;
+    lock = true;
   }
 
-  if (rightID < 40){
+  if (inMapRLocation == true && lock == false && (page == 4 || stateOfMapR > 1) && (stateOfMapL ==1 || stateOfMapL ==3 || stateOfMapL ==5) && (stateOfPaper == 1 || stateOfPaper == 3)) {
+    stateOfMapR = stateOfMapR + 1;
+    lock = true;
+  }
+
+  if (inMapLLocation == true && lock == false && ( stateOfMapR == 1 || stateOfMapR == 3 || stateOfMapR == 5)  && (stateOfPaper == 1 || stateOfPaper == 3)) {
+    stateOfMapL = stateOfMapL + 1;
+    lock = true;
+  }
+
+  if (rightID < 40 && freeToGo == true){
     if (puzzleResult == true && puzzleResultCounter == 10 && page == 3 && lock == false) {
       page = page +1;
       lock = true;
@@ -305,13 +458,13 @@ function mousePressed () {
     }
   }
 
-  if (leftID < 40 && lock == false && (stateOfPaper != 5 ) && page == 4) {
+  if (leftID < 40 && lock == false && freeToGo == true && page == 4) {
     lock = true;
     page = page - 1;
   }
 
 
-  if(leftID < 40 && lock == false && page == 3 && (stateOfPaper != 5) ) {
+  if(leftID < 40 && lock == false && page == 3 && freeToGo == true) {
     for (var r = 1; r < 11; r++) {
       for (var c = 0; c < 10; c++) {
         lockers[r][c] = 0;
@@ -321,6 +474,8 @@ function mousePressed () {
     }
     lock = true;
   }
+
+
 }
 
 function mouseReleased () {
@@ -331,9 +486,12 @@ function mouseReleased () {
 
 function test () {
   fill(255);
-  rect(0,0,100,200);
+  rect(0,0,100,100);
   fill(225,0,0);
-  textSize(11);
-  text("("+int(mouseX)+","+int(mouseY)+")", 40,20);
-  text("lock "+lock,40,40);
+  textSize(7);
+  text("("+int(mouseX)+","+int(mouseY)+")", 0, 0, 100, 20);
+  text("lock "+lock, 0, 10, 100, 20);
+  text("inMapLLocation "+inMapLLocation, 0, 20, 100, 20);
+  text(puzzleResult, 0, 30, 100, 20);
+  text(puzzleResultCounter,0, 40, 100, 20);
 }
