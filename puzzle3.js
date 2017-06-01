@@ -1,4 +1,4 @@
-var page = 4;
+var page = 1;
 var upID;
 var downID;
 var leftID;
@@ -64,7 +64,7 @@ function setup () {
   createCanvas(800, 600);
   textAlign(CENTER);
 
-  sliderVol = createSlider(0, 1, 0.0, 0.01);//0 for no music
+  sliderVol = createSlider(0, 1, 0.5, 0.01);//0 for no music
   sliderVol.style('width', '800px');
 
 
