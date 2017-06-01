@@ -38,7 +38,6 @@ var handMapLX = 0;
 var handMapRX = 400;
 
 var startAnimation = false;
-var linkToInput = false;
 
 function preload () {
   bg01 = loadImage("https://dl.dropboxusercontent.com/s/h8agmlzfcfbse00/bg01.PNG?");
@@ -81,17 +80,6 @@ function setup () {
     for (var c = 0; c < 11; c++) {
       lockers[r][c] = 0;
     }
-  }
-
-  if(linkToInput = true){
-    input = createInput("_");
-    //input.hint("haha");
-    input.style("width","660px");
-    input.style("height","65px");
-    //input.style("fontSize","300%");
-    input.style("font","italic 300% arial");
-    //input.position(25, 652);
-    input.position(25, 704);
   }
 
 }
@@ -473,7 +461,6 @@ function finalPage () {
   background(0);
   image(handMapL, handMapLX,0,400, 600);
   image(handMapR, handMapRX,0,400, 600);
-  linkToInput = true
 }
 
 
