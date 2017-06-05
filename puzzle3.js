@@ -136,7 +136,7 @@ function draw () {
   if( handMapRX == 360 && handMapLX == 40){
     finalPage();
   }
-  //test();
+  test();
 }
 
 function page01 () {
