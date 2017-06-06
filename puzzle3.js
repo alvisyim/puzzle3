@@ -1,4 +1,4 @@
-var page = 1;
+var page = 4;
 var upID;
 var downID;
 var leftID;
@@ -36,8 +36,14 @@ var freeToClick = false;
 var b =0;
 var handMapLX = 0;
 var handMapRX = 400;
+var handMapLSizeY = 600;
+var handMapRSizeY = 600;
 
 var startAnimation = false;
+var passcode = "";
+var numID
+var passcodeCount = 0;
+var finishGame = "nope, not yet";
 
 function preload () {
   bg01 = loadImage("https://dl.dropboxusercontent.com/s/h8agmlzfcfbse00/bg01.PNG?");
@@ -64,7 +70,7 @@ function setup () {
   createCanvas(800, 600);
   textAlign(CENTER);
 
-  sliderVol = createSlider(0, 1, 0.5, 0.01);//0 for no music
+  sliderVol = createSlider(0, 1, 0.0, 0.01);//0.0 for no music, o.5 for yes
   sliderVol.style('width', '800px');
 
 
@@ -92,39 +98,49 @@ function draw () {
   }
   if (page == 1) {
     page01();
-    //tint(255, 128);
   } else if (page == 2) {
     page02();
   } else if (page == 3) {
     page03();
-  } else if (page == 4){
+  } else if (page == 4) {
     page04();
+  } else if (page == 5) {///////////////////////////////////////////////////////////////// not directing to finalPage
+    finalPage();
   }
-    if(page<1){
+
+  if(page<1){
     page=1;
   }
-  if(page>4){
-    page=4;
+  if(page>5){
+    page=5;
   }
   if(b>255){
     b=255;
   }
-
 
   if (stateOfMapR == 5 && stateOfMapL == 3 && lock == false) {
     startAnimation = true;
     lock = true;
   }
   if(startAnimation == true){
-    b = b+10;
+    b = b + 10;
     tint(225,b);
     image(bb,0,0,width,height);
     noTint();
-    image(handMapL, handMapLX,0,400, 600);
-    image(handMapR, handMapRX,0,400, 600);
+    image(handMapL, handMapLX,0,400, handMapLSizeY);
+    image(handMapR, handMapRX,0,400, handMapRSizeY);
 
     handMapLX = handMapLX + 2;
     handMapRX = handMapRX - 2;
+    handMapLSizeY = handMapLSizeY - 2;
+    handMapRSizeY = handMapRSizeY - 2;
+
+    if(handMapLSizeY < 450){
+      handMapLSizeY = 450;
+    }
+    if (handMapRSizeY < 450){
+      handMapRSizeY = 450;
+    }
     if(handMapLX > 40){
       handMapLX = 40;
     }
@@ -133,8 +149,9 @@ function draw () {
     }
   }
 
-  if( handMapRX == 360 && handMapLX == 40){
-    finalPage();
+  if(handMapRX == 360 && handMapLX == 40 && handMapRSizeY == 450 && handMapLSizeY == 450){
+    lock = false;
+    page = 5;////////////////////////////////////////////////////////////////////////
   }
   test();
 }
@@ -211,14 +228,12 @@ function page03 () {
     for (var c = 0; c < 11; c++) {
       if (mouseIsPressed == true && mouseX > (r*50)+100 && mouseX < (r*50)+100+50 && mouseY > c*50 && mouseY < c*50+50 && lock == false) {
         lock = true;
-        lockers[r][c] = 1;
-        puzzleResultCounter++;
-        /*if(lockers[r][c] = 0){
+        if(lockers[r][c] == 0){
           lockers[r][c] = 1;
           puzzleResultCounter++;
         } else {
 
-        }*/
+        }
       }
     }
   }
@@ -459,18 +474,71 @@ function nav () {
 
 function finalPage () {
   background(0);
-  image(handMapL, handMapLX,0,400, 600);
-  image(handMapR, handMapRX,0,400, 600);
+  image(handMapL, handMapLX,0,400, handMapLSizeY);
+  image(handMapR, handMapRX,0,400, handMapRSizeY);
+
+  for(var d = 0; d < 10; d++) {
+    fill(255);
+    ellipse(40+(80*d),550,70,70);
+    fill(0);
+    textSize(40);
+    text(d,40+(80*d),560);
+
+
+    numID = sqrt((mouseX-(40+(80*d)))*(mouseX-(40+(80*d)))+(mouseY-550)*(mouseY-550));
+
+    if(numID < 35){
+      cursor(HAND);/////////////////////////////////////////////////////////////////////////////////////////////not working
+      if(mouseIsPressed == true && lock == false && passcodeCount < 3){
+        lock = true;
+        fill(255);
+        passcode = passcode + d;
+        passcodeCount = passcodeCount + 1;
+      }
+    } else if (mouseX >500 && mouseX < 560 && mouseY > 440 && mouseY < 500) {
+      cursor(HAND);
+      if (mouseIsPressed == true && lock == false){
+        lock = true;
+        passcode = "";
+        passcodeCount = 0;
+      }
+    } else {
+      cursor(ARROW);
+    }
+  }
+
+  fill(255);
+  stroke(120);
+  strokeWeight(10);
+  rect(250,440,250,60);
+  rect(500,440,60,60);
+  noStroke(5);
+  fill(0);
+  textSize(60);
+  text(passcode,375,490);
+  textSize(40);
+  text("C",530,485);
+
+  if(passcodeCount == 3){
+    if(passcode == "141"){
+
+      var ee = confirm("Congrats, you have the right answer.")
+      if (ee == true || ee == false){
+        finishGame == "Hell Yeah";
+      }
+    }
+  }
+
+
 }
 
-
 function mousePressed () {
-  if (upID < 40 && lock == false && freeToGo == true && page != 3) {
+  if (upID < 40 && lock == false && freeToGo == true && page != 3 && page != 4) {
     lock = true;
     page = page + 1;
   }
 
-  if (downID < 40 && lock == false && freeToGo == true) {
+  if (downID < 40 && lock == false && freeToGo == true && page != 4) {
     lock = true;
     page = page - 1;
   }
@@ -515,8 +583,6 @@ function mousePressed () {
     }
     lock = true;
   }
-
-
 }
 
 function mouseReleased () {
@@ -530,9 +596,8 @@ function test () {
   rect(0,0,100,100);
   fill(225,0,0);
   textSize(7);
-  text("("+int(mouseX)+","+int(mouseY)+")", 0, 0, 100, 20);
-  text("lock "+lock, 0, 10, 100, 20);
-  text("inMapLLocation "+inMapLLocation, 0, 20, 100, 20);
-  text(puzzleResult, 0, 30, 100, 20);
-  text(b,0, 40, 100, 20);
+  text("("+int(mouseX)+","+int(mouseY)+")", 50, 10);
+  text("lock "+lock, 50, 20);
+  text("inMapLLocation "+inMapLLocation, 50, 30);
+  text("page"+page,50,40);
 }
