@@ -70,7 +70,7 @@ function setup () {
   createCanvas(800, 600);
   textAlign(CENTER);
 
-  sliderVol = createSlider(0, 1, 0.0, 0.01);//0.0 for no music, o.5 for yes
+  sliderVol = createSlider(0, 1, 0.5, 0.01);//0.0 for no music, o.5 for yes
   sliderVol.style('width', '800px');
 
 
@@ -104,7 +104,7 @@ function draw () {
     page03();
   } else if (page == 4) {
     page04();
-  } else if (page == 5) {///////////////////////////////////////////////////////////////// not directing to finalPage
+  } else if (page == 5) {
     finalPage();
   }
 
@@ -117,43 +117,7 @@ function draw () {
   if(b>255){
     b=255;
   }
-
-  if (stateOfMapR == 5 && stateOfMapL == 3 && lock == false) {
-    startAnimation = true;
-    lock = true;
-  }
-  if(startAnimation == true){
-    b = b + 10;
-    tint(225,b);
-    image(bb,0,0,width,height);
-    noTint();
-    image(handMapL, handMapLX,0,400, handMapLSizeY);
-    image(handMapR, handMapRX,0,400, handMapRSizeY);
-
-    handMapLX = handMapLX + 2;
-    handMapRX = handMapRX - 2;
-    handMapLSizeY = handMapLSizeY - 2;
-    handMapRSizeY = handMapRSizeY - 2;
-
-    if(handMapLSizeY < 450){
-      handMapLSizeY = 450;
-    }
-    if (handMapRSizeY < 450){
-      handMapRSizeY = 450;
-    }
-    if(handMapLX > 40){
-      handMapLX = 40;
-    }
-    if (handMapRX <360){
-      handMapRX = 360;
-    }
-  }
-
-  if(handMapRX == 360 && handMapLX == 40 && handMapRSizeY == 450 && handMapLSizeY == 450){
-    lock = false;
-    page = 5;////////////////////////////////////////////////////////////////////////
-  }
-  test();
+  //test();
 }
 
 function page01 () {
@@ -302,6 +266,39 @@ function page04 () {
   image(left, 0, (height/2)-40, 80, 80);
   //image(right, 720, (height/2)-40, 80, 80);
   //image(down,(width/2)-40, 520, 80, 80);
+
+  if (stateOfMapR == 5 && stateOfMapL == 3 && lock == false) {
+    startAnimation = true;
+    lock = true;
+  }
+  if(startAnimation == true){
+    b = b + 10;
+    tint(225,b);
+    image(bb,0,0,width,height);
+    noTint();
+    image(handMapL, handMapLX,0,400, handMapLSizeY);
+    image(handMapR, handMapRX,0,400, handMapRSizeY);
+      handMapLX = handMapLX + 2;
+      handMapRX = handMapRX - 2;
+      handMapLSizeY = handMapLSizeY - 2;
+      handMapRSizeY = handMapRSizeY - 2;
+      if(handMapLSizeY < 450){
+      handMapLSizeY = 450;
+    }
+    if (handMapRSizeY < 450){
+      handMapRSizeY = 450;
+    }
+    if(handMapLX > 40){
+      handMapLX = 40;
+    }
+    if (handMapRX <360){
+      handMapRX = 360;
+    }
+  }
+    if(handMapRX == 360 && handMapLX == 40 && handMapRSizeY == 450 && handMapLSizeY == 450){
+    lock = false;
+    page = 5;
+  }
 }
 
 function ID () {
@@ -489,7 +486,7 @@ function finalPage () {
 
     if(numID < 35){
       cursor(HAND);/////////////////////////////////////////////////////////////////////////////////////////////not working
-      if(mouseIsPressed == true && lock == false && passcodeCount < 3){
+      if(mouseIsPressed == true && lock == false && passcodeCount < 3){/////////////////////////////////////////0 is not working
         lock = true;
         fill(255);
         passcode = passcode + d;
@@ -521,15 +518,12 @@ function finalPage () {
 
   if(passcodeCount == 3){
     if(passcode == "141"){
-
       var ee = confirm("Congrats, you have the right answer.")
       if (ee == true || ee == false){
-        finishGame == "Hell Yeah";
+        finishGame == "Hell Yeah it is";
       }
     }
   }
-
-
 }
 
 function mousePressed () {
@@ -548,12 +542,12 @@ function mousePressed () {
     lock = true;
   }
 
-  if (inMapRLocation == true && lock == false && (page == 4 || stateOfMapR > 1) && (stateOfMapL ==1 || stateOfMapL ==3 || stateOfMapL ==5) && (stateOfPaper == 1 || stateOfPaper == 3)) {
+  if (inMapRLocation == true && lock == false && (page == 4 || stateOfMapR > 1) && (stateOfMapL ==1 || stateOfMapL ==3) && (stateOfPaper == 1 || stateOfPaper == 3)) {
     stateOfMapR = stateOfMapR + 1;
     lock = true;
   }
 
-  if (inMapLLocation == true && lock == false && ( stateOfMapR == 1 || stateOfMapR == 3 || stateOfMapR == 5)  && (stateOfPaper == 1 || stateOfPaper == 3)) {
+  if (inMapLLocation == true && lock == false && ( stateOfMapR == 1 || stateOfMapR == 3)  && (stateOfPaper == 1 || stateOfPaper == 3)) {
     stateOfMapL = stateOfMapL + 1;
     lock = true;
   }
@@ -601,3 +595,6 @@ function test () {
   text("inMapLLocation "+inMapLLocation, 50, 30);
   text("page"+page,50,40);
 }
+
+
+// when everything finishes, (finishGame == "Hell Yeah it is")
